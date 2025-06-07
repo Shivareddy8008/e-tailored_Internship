@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { User } from "lucide-react";
+import { useEffect } from "react";
 
 const personalInfoSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -34,6 +35,16 @@ export function PersonalInfoStep({ onNext }: PersonalInfoStepProps) {
     updateFormData(data);
     onNext();
   };
+
+  // Auto-save form data when inputs change
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value.firstName || value.lastName || value.email) {
+        updateFormData(value as Partial<PersonalInfoData>);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, updateFormData]);
 
   return (
     <div className="px-8 py-8">

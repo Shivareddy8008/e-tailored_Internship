@@ -42,8 +42,12 @@ export function OnboardingWizard() {
     },
   });
 
+  const [isFormValid, setIsFormValid] = useState(false);
+
   const handleNext = () => {
-    if (currentStep < 3) {
+    // Validate current step before proceeding
+    const isValid = validateCurrentStep();
+    if (isValid && currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -58,6 +62,19 @@ export function OnboardingWizard() {
     if (formData.firstName && formData.lastName && formData.email && 
         formData.companyName && formData.industry && formData.companySize) {
       createUserMutation.mutate(formData as OnboardingFormData);
+    }
+  };
+
+  const validateCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.firstName && formData.lastName && formData.email;
+      case 2:
+        return formData.companyName && formData.industry && formData.companySize;
+      case 3:
+        return formData.theme && formData.layout;
+      default:
+        return false;
     }
   };
 
