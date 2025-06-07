@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { Settings, Sun, Moon } from "lucide-react";
+import { useEffect } from "react";
 
 const preferencesSchema = z.object({
   theme: z.enum(["light", "dark"]),
@@ -15,9 +16,10 @@ type PreferencesData = z.infer<typeof preferencesSchema>;
 
 interface PreferencesStepProps {
   onNext: () => void;
+  onValidationChange: (isValid: boolean) => void;
 }
 
-export function PreferencesStep({ onNext }: PreferencesStepProps) {
+export function PreferencesStep({ onNext, onValidationChange }: PreferencesStepProps) {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<PreferencesData>({
@@ -32,6 +34,16 @@ export function PreferencesStep({ onNext }: PreferencesStepProps) {
     updateFormData(data);
     onNext();
   };
+
+  // Auto-save form data and validate
+  React.useEffect(() => {
+    const subscription = form.watch((value) => {
+      updateFormData(value as Partial<PreferencesData>);
+      const isValid = value.theme && value.layout;
+      onValidationChange(!!isValid);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, updateFormData, onValidationChange]);
 
   return (
     <div className="px-8 py-8">

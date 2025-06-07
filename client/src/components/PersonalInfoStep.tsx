@@ -17,9 +17,10 @@ type PersonalInfoData = z.infer<typeof personalInfoSchema>;
 
 interface PersonalInfoStepProps {
   onNext: () => void;
+  onValidationChange: (isValid: boolean) => void;
 }
 
-export function PersonalInfoStep({ onNext }: PersonalInfoStepProps) {
+export function PersonalInfoStep({ onNext, onValidationChange }: PersonalInfoStepProps) {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<PersonalInfoData>({
@@ -36,15 +37,15 @@ export function PersonalInfoStep({ onNext }: PersonalInfoStepProps) {
     onNext();
   };
 
-  // Auto-save form data when inputs change
+  // Auto-save form data and validate
   useEffect(() => {
     const subscription = form.watch((value) => {
-      if (value.firstName || value.lastName || value.email) {
-        updateFormData(value as Partial<PersonalInfoData>);
-      }
+      updateFormData(value as Partial<PersonalInfoData>);
+      const isValid = value.firstName && value.lastName && value.email;
+      onValidationChange(!!isValid);
     });
     return () => subscription.unsubscribe();
-  }, [form, updateFormData]);
+  }, [form, updateFormData, onValidationChange]);
 
   return (
     <div className="px-8 py-8">

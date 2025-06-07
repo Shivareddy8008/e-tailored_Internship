@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 import { Building2 } from "lucide-react";
+import { useEffect } from "react";
 
 const businessInfoSchema = z.object({
   companyName: z.string().min(1, "Company name is required"),
@@ -17,9 +18,10 @@ type BusinessInfoData = z.infer<typeof businessInfoSchema>;
 
 interface BusinessInfoStepProps {
   onNext: () => void;
+  onValidationChange: (isValid: boolean) => void;
 }
 
-export function BusinessInfoStep({ onNext }: BusinessInfoStepProps) {
+export function BusinessInfoStep({ onNext, onValidationChange }: BusinessInfoStepProps) {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<BusinessInfoData>({
@@ -35,6 +37,16 @@ export function BusinessInfoStep({ onNext }: BusinessInfoStepProps) {
     updateFormData(data);
     onNext();
   };
+
+  // Auto-save form data and validate
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      updateFormData(value as Partial<BusinessInfoData>);
+      const isValid = value.companyName && value.industry && value.companySize;
+      onValidationChange(!!isValid);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, updateFormData, onValidationChange]);
 
   return (
     <div className="px-8 py-8">
