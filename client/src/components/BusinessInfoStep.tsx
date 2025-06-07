@@ -16,12 +16,7 @@ const businessInfoSchema = z.object({
 
 type BusinessInfoData = z.infer<typeof businessInfoSchema>;
 
-interface BusinessInfoStepProps {
-  onNext: () => void;
-  onValidationChange: (isValid: boolean) => void;
-}
-
-export function BusinessInfoStep({ onNext, onValidationChange }: BusinessInfoStepProps) {
+export function BusinessInfoStep() {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<BusinessInfoData>({
@@ -33,20 +28,15 @@ export function BusinessInfoStep({ onNext, onValidationChange }: BusinessInfoSte
     },
   });
 
-  const onSubmit = (data: BusinessInfoData) => {
-    updateFormData(data);
-    onNext();
-  };
-
-  // Auto-save form data and validate
+  // Auto-save form data when inputs change
   useEffect(() => {
     const subscription = form.watch((value) => {
-      updateFormData(value as Partial<BusinessInfoData>);
-      const isValid = value.companyName && value.industry && value.companySize;
-      onValidationChange(!!isValid);
+      if (value.companyName !== undefined || value.industry !== undefined || value.companySize !== undefined) {
+        updateFormData(value as Partial<BusinessInfoData>);
+      }
     });
     return () => subscription.unsubscribe();
-  }, [form, updateFormData, onValidationChange]);
+  }, [form, updateFormData]);
 
   return (
     <div className="px-8 py-8">
@@ -59,7 +49,7 @@ export function BusinessInfoStep({ onNext, onValidationChange }: BusinessInfoSte
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form className="space-y-6">
           <FormField
             control={form.control}
             name="companyName"

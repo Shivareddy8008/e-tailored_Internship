@@ -15,12 +15,7 @@ const personalInfoSchema = z.object({
 
 type PersonalInfoData = z.infer<typeof personalInfoSchema>;
 
-interface PersonalInfoStepProps {
-  onNext: () => void;
-  onValidationChange: (isValid: boolean) => void;
-}
-
-export function PersonalInfoStep({ onNext, onValidationChange }: PersonalInfoStepProps) {
+export function PersonalInfoStep() {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<PersonalInfoData>({
@@ -32,20 +27,15 @@ export function PersonalInfoStep({ onNext, onValidationChange }: PersonalInfoSte
     },
   });
 
-  const onSubmit = (data: PersonalInfoData) => {
-    updateFormData(data);
-    onNext();
-  };
-
-  // Auto-save form data and validate
+  // Auto-save form data when inputs change
   useEffect(() => {
     const subscription = form.watch((value) => {
-      updateFormData(value as Partial<PersonalInfoData>);
-      const isValid = value.firstName && value.lastName && value.email;
-      onValidationChange(!!isValid);
+      if (value.firstName !== undefined || value.lastName !== undefined || value.email !== undefined) {
+        updateFormData(value as Partial<PersonalInfoData>);
+      }
     });
     return () => subscription.unsubscribe();
-  }, [form, updateFormData, onValidationChange]);
+  }, [form, updateFormData]);
 
   return (
     <div className="px-8 py-8">
@@ -58,7 +48,7 @@ export function PersonalInfoStep({ onNext, onValidationChange }: PersonalInfoSte
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form className="space-y-6">
           <FormField
             control={form.control}
             name="firstName"

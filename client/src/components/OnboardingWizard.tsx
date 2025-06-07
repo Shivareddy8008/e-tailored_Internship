@@ -12,7 +12,7 @@ import { PreferencesStep } from "./PreferencesStep";
 import { NavigationButtons } from "./NavigationButtons";
 
 export function OnboardingWizard() {
-  const { currentStep, setCurrentStep, formData, resetOnboarding } = useOnboarding();
+  const { currentStep, setCurrentStep, formData } = useOnboarding();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -22,15 +22,11 @@ export function OnboardingWizard() {
       return response.json();
     },
     onSuccess: (user) => {
-      // Save user data to localStorage
       localStorage.setItem("businesshub_user", JSON.stringify(user));
-      
       toast({
         title: "Welcome to BusinessHub!",
         description: "Your account has been set up successfully.",
       });
-      
-      // Redirect to dashboard
       setLocation("/dashboard");
     },
     onError: (error: any) => {
@@ -42,12 +38,8 @@ export function OnboardingWizard() {
     },
   });
 
-  const [isFormValid, setIsFormValid] = useState(false);
-
   const handleNext = () => {
-    // Validate current step before proceeding
-    const isValid = validateCurrentStep();
-    if (isValid && currentStep < 3) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -59,35 +51,25 @@ export function OnboardingWizard() {
   };
 
   const handleSubmit = () => {
-    if (formData.firstName && formData.lastName && formData.email && 
-        formData.companyName && formData.industry && formData.companySize) {
-      createUserMutation.mutate(formData as OnboardingFormData);
-    }
-  };
-
-  const validateCurrentStep = () => {
-    switch (currentStep) {
-      case 1:
-        return formData.firstName && formData.lastName && formData.email;
-      case 2:
-        return formData.companyName && formData.industry && formData.companySize;
-      case 3:
-        return formData.theme && formData.layout;
-      default:
-        return false;
-    }
+    const completeData = {
+      ...formData,
+      theme: formData.theme || "light",
+      layout: formData.layout || "grid"
+    } as OnboardingFormData;
+    
+    createUserMutation.mutate(completeData);
   };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 1:
-        return <PersonalInfoStep onNext={handleNext} />;
+        return <PersonalInfoStep />;
       case 2:
-        return <BusinessInfoStep onNext={handleNext} />;
+        return <BusinessInfoStep />;
       case 3:
-        return <PreferencesStep onNext={handleSubmit} />;
+        return <PreferencesStep />;
       default:
-        return <PersonalInfoStep onNext={handleNext} />;
+        return <PersonalInfoStep />;
     }
   };
 

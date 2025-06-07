@@ -14,12 +14,7 @@ const preferencesSchema = z.object({
 
 type PreferencesData = z.infer<typeof preferencesSchema>;
 
-interface PreferencesStepProps {
-  onNext: () => void;
-  onValidationChange: (isValid: boolean) => void;
-}
-
-export function PreferencesStep({ onNext, onValidationChange }: PreferencesStepProps) {
+export function PreferencesStep() {
   const { formData, updateFormData } = useOnboarding();
   
   const form = useForm<PreferencesData>({
@@ -30,20 +25,15 @@ export function PreferencesStep({ onNext, onValidationChange }: PreferencesStepP
     },
   });
 
-  const onSubmit = (data: PreferencesData) => {
-    updateFormData(data);
-    onNext();
-  };
-
-  // Auto-save form data and validate
-  React.useEffect(() => {
+  // Auto-save form data when inputs change
+  useEffect(() => {
     const subscription = form.watch((value) => {
-      updateFormData(value as Partial<PreferencesData>);
-      const isValid = value.theme && value.layout;
-      onValidationChange(!!isValid);
+      if (value.theme !== undefined || value.layout !== undefined) {
+        updateFormData(value as Partial<PreferencesData>);
+      }
     });
     return () => subscription.unsubscribe();
-  }, [form, updateFormData, onValidationChange]);
+  }, [form, updateFormData]);
 
   return (
     <div className="px-8 py-8">
@@ -56,7 +46,7 @@ export function PreferencesStep({ onNext, onValidationChange }: PreferencesStepP
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form className="space-y-8">
           <FormField
             control={form.control}
             name="theme"
