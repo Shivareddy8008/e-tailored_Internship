@@ -66,10 +66,12 @@ The frontend will be available at `http://localhost:5173` (default Vite port).
 
 ---
 ##Images
-![image](https://github.com/user-attachments/assets/2c7d0d5c-d6df-4f1e-8d85-9638784b7136)
-![image](https://github.com/user-attachments/assets/82a04a5d-4879-40ba-9c82-95931a68286e)
-![image](https://github.com/user-attachments/assets/a7de31f3-838a-431b-82e2-4ab3c675dd54)
-![image](https://github.com/user-attachments/assets/e73282a6-4085-496c-873b-fe450fda9a45)
+![Screenshot 2025-06-07 154435](https://github.com/user-attachments/assets/dc9e3150-6ffe-4e42-9224-1e7e24be23ee)
+![Screenshot 2025-06-07 154342](https://github.com/user-attachments/assets/75d3a0c3-d574-4193-8db8-281c47e84e7c)
+![Screenshot 2025-06-07 154402](https://github.com/user-attachments/assets/54e3844e-54bc-4344-aa29-8f48d6c1bfc4)
+![Screenshot 2025-06-07 154435](https://github.com/user-attachments/assets/c95ac3a6-7959-4c43-8184-dcebee91929d)
+
+
 
 
 
