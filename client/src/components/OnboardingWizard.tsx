@@ -24,7 +24,7 @@ export function OnboardingWizard() {
     onSuccess: (user) => {
       localStorage.setItem("businesshub_user", JSON.stringify(user));
       toast({
-        title: "Welcome to BusinessHub!",
+        title: "Welcome to ProjectFlow!",
         description: "Your account has been set up successfully.",
       });
       setLocation("/dashboard");

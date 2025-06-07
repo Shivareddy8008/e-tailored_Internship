@@ -9,7 +9,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   return (
     <div className="bg-gradient-to-r from-primary to-blue-600 px-8 py-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-white">Welcome to BusinessHub</h1>
+        <h1 className="text-2xl font-bold text-white">Welcome to ProjectFlow</h1>
         <span className="text-blue-100 text-sm font-medium">
           Step {currentStep} of {totalSteps}
         </span>
